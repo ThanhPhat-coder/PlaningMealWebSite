@@ -1,0 +1,104 @@
+.Main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.Heading {
+  flex-shrink: 0;
+}
+
+.Body {
+  flex-grow: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Carousel Section */
+.carousel-section {
+  width: 100%;
+  margin-bottom: 20px;
+  overflow: hidden; /* Ensure no overflow beyond the container */
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 400px; /* Set a fixed height for the carousel */
+  overflow: hidden; /* Hide anything outside the carousel's width */
+}
+
+
+.carousel img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  flex-shrink: 0; /* Prevent image from shrinking */
+}
+
+
+
+/* Popular Dishes Section */
+.popular-dishes {
+  width: 100%;
+  text-align: center;
+}
+
+.dishes-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap; /* Ensure dishes wrap to a new line on smaller screens */
+}
+
+.dish-card {
+  width: 150px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dish-card img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.dish-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .carousel {
+    height: 250px; /* Adjust height for smaller screens */
+  }
+
+  .dish-card {
+    width: 120px; /* Reduce width of dish cards on small screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel {
+    height: 200px; /* Further reduce height for mobile */
+  }
+
+  .dish-card {
+    width: 100px; /* Smaller cards for mobile screens */
+  }
+
+  .Body {
+    padding: 10px; /* Reduce padding for small screens */
+  }
+}
+
+.Footer {
+  flex-shrink: 0; /* Ensure footer stays at the bottom */
+}

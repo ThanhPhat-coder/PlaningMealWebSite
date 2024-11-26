@@ -1,0 +1,54 @@
+.footer-container {
+    background-color: #c9d6ff;
+    background: linear-gradient(to right, #e2e2e2, #c9d6ff);; /* Màu nền cho footer */
+    padding: 15px; /* Tăng padding để footer thoáng hơn */
+    display: flex;
+    justify-content: space-between; /* Giữ khoảng cách đều giữa các phần tử */
+    align-items: center; /* Căn giữa các mục theo chiều dọc */
+    flex-wrap: wrap; /* Cho phép các mục xuống dòng nếu cần */
+    border-top: 2px solid #1185e3; /* Viền trên nhẹ nhàng */
+    font-size: 14px; /* Tăng kích thước chữ cho dễ đọc */
+    position: relative; /* Cần để căn vị trí của biểu tượng quay */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho footer */
+    margin-top: 60px;
+}
+
+.footer-section {
+    flex: 1; /* Cho phép các phần tử chiếm không gian đều */
+    text-align: center; /* Căn giữa nội dung */
+    padding: 0 15px; /* Thêm khoảng cách padding cho các mục */
+}
+
+.footer-section h3 {
+    font-size: 16px; /* Kích thước chữ tiêu đề vừa phải */
+    margin-bottom: 5px; /* Khoảng cách dưới tiêu đề */
+    color: #333; /* Màu chữ tiêu đề */
+}
+
+.footer-section p,
+.footer-section ul {
+    margin: 0; /* Không có khoảng cách */
+    padding: 0; /* Không có padding */
+    list-style: none; /* Không hiển thị dấu đầu dòng */
+    color: #666; /* Màu chữ cho nội dung */
+}
+
+.footer-section a {
+    color: #007bff; /* Màu link */
+    text-decoration: none; /* Không gạch chân */
+    transition: color 0.3s; /* Hiệu ứng chuyển màu khi hover */
+}
+
+.footer-section a:hover {
+    text-decoration: underline; /* Gạch chân khi hover */
+    color: #0056b3; /* Đổi màu khi hover */
+}
+
+.footer-copyright {
+    text-align: center; /* Căn giữa copyright */
+    flex-basis: 100%; /* Chiếm toàn bộ chiều rộng */
+    margin-top: 10px; /* Khoảng cách trên */
+    font-size: 12px; /* Kích thước chữ cho copyright */
+    color: #888; /* Màu chữ nhẹ cho copyright */
+    opacity: 0.8; /* Độ mờ cho văn bản copyright */
+}

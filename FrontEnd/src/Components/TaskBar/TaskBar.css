@@ -1,0 +1,158 @@
+/* Container cho TaskBar */
+.taskbar-container {
+    display: flex; /* Sử dụng flexbox để bố trí các phần tử */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    background-color: #2c2c2c; /* Màu nền tối cho thanh taskbar */
+    padding: 10px 20px; /* Khoảng cách cho thanh */
+    justify-content: space-between; /* Đảm bảo khoảng cách giữa bên trái và bên phải */
+    color: #ffffff; /* Màu chữ */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font chữ hiện đại */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Thêm bóng cho thanh taskbar */
+    border-radius: 25px;
+    margin: 10px 10px 0 10px; 
+}
+
+/* Phần bên trái của TaskBar */
+.taskbar-left {
+    display: flex; /* Bố trí icon bên trái */
+    align-items: center; /* Căn giữa các icon trong taskbar */
+}
+
+/* Icon trong TaskBar */
+.taskbar-icon {
+    padding: 10px; /* Khoảng cách cho icon */
+    background-color: #444; /* Màu nền cho icon */
+    border-radius: 50%; /* Bo tròn icon */
+    cursor: pointer; /* Hiển thị con trỏ tay khi hover */
+    display: flex; /* Sử dụng flexbox để căn giữa icon */
+    align-items: center; /* Căn giữa các phần tử */
+    justify-content: center; /* Căn giữa các phần tử */
+    margin-right: 15px; /* Khoảng cách giữa các icon */
+    transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu nền và phóng to khi hover */
+}
+
+.taskbar-icon:hover {
+    background-color: #555; /* Đổi màu nền khi hover */
+    transform: scale(1.1); /* Phóng to icon khi hover */
+}
+
+/* Icon nhạc */
+.music-icon {
+    display: flex; /* Bố trí icon nhạc bên trái */
+    align-items: center; /* Căn giữa */
+    padding: 8px 12px; /* Padding cho icon nhạc */
+    background-color: #444; /* Màu nền cho icon nhạc */
+    border-radius: 5px; /* Bo tròn góc cho icon nhạc */
+    cursor: pointer; /* Hiển thị con trỏ tay khi hover */
+    transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu nền và phóng to khi hover */
+}
+
+.music-icon:hover {
+    background-color: #555; /* Đổi màu nền khi hover */
+    transform: scale(1.05); /* Phóng to icon nhạc khi hover */
+}
+
+.music-icon.playing {
+    background-color: #28a745; /* Màu nền xanh cho nút khi nhạc đang phát */
+    transform: scale(1.05); /* Phóng to một chút để tạo hiệu ứng */
+}
+
+/* Biểu tượng nhạc */
+.music-icon i {
+    font-size: 20px; /* Kích thước icon nhạc */
+    margin-right: 5px; /* Khoảng cách giữa icon và text */
+}
+
+/* Text nhạc */
+.music-text {
+    font-size: 14px; /* Kích thước chữ cho text nhạc */
+    color: #ffffff; /* Màu chữ cho text nhạc */
+    font-weight: bold; /* Đặt chữ in đậm để nổi bật hơn */
+}
+
+/* Phần bên phải của TaskBar */
+.taskbar-right {
+    display: flex; /* Bố trí các phần tử bên phải */
+    align-items: center; /* Căn giữa các mục trong taskbar */
+}
+
+/* Container cho các mục chức năng */
+.taskbar-item-container {
+    display: flex; /* Hiển thị các chức năng bên cạnh nhau */
+    margin-right: 20px; /* Khoảng cách giữa chức năng và khu vực user */
+}
+
+/* Mục chức năng */
+.taskbar-item {
+    padding: 10px 15px; /* Padding cho các mục chức năng */
+    background-color: #444; /* Màu nền cho mục chức năng */
+    margin: 0 5px; /* Khoảng cách giữa các mục chức năng */
+    border-radius: 5px; /* Bo tròn góc cho mục chức năng */
+    cursor: pointer; /* Hiển thị con trỏ tay khi hover */
+    transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu nền và phóng to khi hover */
+}
+
+.taskbar-item:hover {
+    background-color: #555; /* Đổi màu nền khi hover */
+    transform: scale(1.05); /* Phóng to mục chức năng khi hover */
+}
+
+/* Hồ sơ người dùng */
+.user-profile {
+    display: flex; /* Bố trí avatar và dropdown */
+    align-items: center; /* Căn giữa avatar và dropdown */
+    cursor: pointer; /* Hiển thị con trỏ tay khi hover */
+    position: relative; /* Dùng cho dropdown */
+}
+
+/* Avatar người dùng */
+.user-avatar {
+    width: 40px; /* Kích thước avatar */
+    height: 40px; /* Kích thước avatar */
+    border-radius: 50%; /* Bo tròn avatar */
+    margin-right: 10px; /* Khoảng cách giữa avatar và icon dropdown */
+    border: 2px solid #fff; /* Viền trắng cho avatar */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Bóng cho avatar */
+}
+
+/* Icon dropdown */
+.dropdown-icon {
+    font-size: 14px; /* Kích thước icon dropdown */
+    color: #fff; /* Màu chữ cho icon dropdown */
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    position: absolute; /* Đặt vị trí dropdown tương đối */
+    top: 50px; /* Khoảng cách từ trên xuống */
+    right: 0; /* Căn phải */
+    background-color: #fff; /* Màu nền cho dropdown */
+    color: #333; /* Màu chữ cho dropdown */
+    border-radius: 8px; /* Bo tròn các góc cho dropdown */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Bóng cho dropdown */
+    padding: 10px 0; /* Padding cho dropdown */
+    min-width: 160px; /* Đặt độ rộng tối thiểu cho dropdown */
+    z-index: 1000; /* Đặt độ ưu tiên để dropdown không bị chồng lên */
+    transition: all 0.3s ease; /* Hiệu ứng chuyển động mượt mà */
+}
+
+/* Các mục trong dropdown menu */
+.dropdown-menu a {
+    display: flex; /* Hiển thị các mục chiếm toàn bộ chiều rộng */
+    align-items: center; /* Căn giữa icon và text */
+    color: #333; /* Màu chữ cho các mục dropdown */
+    text-decoration: none; /* Không gạch chân */
+    padding: 10px 15px; /* Padding cho các mục dropdown */
+    border-radius: 5px; /* Bo tròn góc cho các mục dropdown */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển màu nền khi hover */
+    text-align: left; /* Căn trái cho chữ */
+}
+
+.dropdown-menu a:hover {
+    background-color: #f0f0f0; /* Màu nền cho các mục khi hover */
+}
+
+.dropdown-menu a svg {
+    margin-right: 8px; /* Khoảng cách giữa icon và text */
+    color: #007bff; /* Màu icon */
+}
