@@ -60,6 +60,25 @@ app.post('/register', (req, res) => {
   });
 });
 
+// Renew Token API
+app.post('/renew-token', (req, res) => {
+  const { token } = req.body;
+
+  if (!token) return res.status(400).json({ error: 'Token is required' });
+
+  try {
+    // Verify the old token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Create a new token with the same user data
+    const newToken = jwt.sign({ id: decoded.id, username: decoded.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.json({ newToken });
+  } catch (error) {
+    res.status(401).json({ error: 'Token has expired or is invalid' });
+  }
+});
+
 // Get Detailed Food Items with Ingredients
 app.get('/food-items', (req, res) => {
   const query = `
@@ -287,6 +306,127 @@ app.get('/meal-plan', (req, res) => {
   });
 });
 
+// Lấy danh sách món ăn
+app.get('/dishes', (req, res) => {
+  const query = 'SELECT * FROM FoodItems';
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: 'Server error' });
+    res.json(results);
+  });
+});
+
+// Thêm món ăn mới
+app.post('/dishes', (req, res) => {
+  const { name, image, description, price, calories } = req.body;
+  const query = 'INSERT INTO FoodItems (name, image, description, price, calories) VALUES (?, ?, ?, ?, ?)';
+  db.query(query, [name, image, description, price, calories], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Server error' });
+    res.json({ success: true, message: 'Dish added successfully', dishId: results.insertId });
+  });
+});
+
+// Cập nhật món ăn
+app.put('/dishes/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, image, description, price, calories } = req.body;
+  const query = 'UPDATE FoodItems SET name = ?, image = ?, description = ?, price = ?, calories = ? WHERE Fid = ?';
+  db.query(query, [name, image, description, price, calories, id], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Server error' });
+    if (results.affectedRows === 0) return res.status(404).json({ error: 'Dish not found' });
+    res.json({ success: true, message: 'Dish updated successfully' });
+  });
+});
+
+app.delete('/dishes/:id', (req, res) => {
+  const { id } = req.params;
+
+  // Xóa dữ liệu liên quan trước
+  const deleteIngredientsQuery = 'DELETE FROM fooditems_ingredient WHERE mid = ?';
+  db.query(deleteIngredientsQuery, [id], (err) => {
+    if (err) {
+      console.error('Error deleting related ingredients:', err);
+      return res.status(500).json({ error: 'Server error' });
+    }
+
+    // Xóa món ăn
+    const deleteDishQuery = 'DELETE FROM FoodItems WHERE Fid = ?';
+    db.query(deleteDishQuery, [id], (err, results) => {
+      if (err) {
+        console.error('Error deleting dish:', err);
+        return res.status(500).json({ error: 'Server error' });
+      }
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ error: 'Dish not found' });
+      }
+      res.json({ success: true, message: 'Dish deleted successfully' });
+    });
+  });
+});
+
+// Lấy danh sách nguyên liệu
+app.get('/ingredients', (req, res) => {
+  const query = 'SELECT * FROM ingredients';
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: 'Server error' });
+    res.json(results);
+  });
+});
+
+// Lấy chi tiết món ăn theo ID
+app.get('/food-items/:id', (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT fi.Fid, fi.name AS foodName, fi.image, fi.description, fi.price AS foodPrice, fi.calories AS foodCalories, 
+           i.id AS ingredientId, i.name AS ingredientName, i.calories AS ingredientCalories, i.price AS ingredientPrice, 
+           fi_ing.gram, fi_ing.totalCalo 
+    FROM FoodItems AS fi
+    JOIN FoodItems_Ingredient AS fi_ing ON fi.Fid = fi_ing.mid
+    JOIN ingredients AS i ON fi_ing.Iid = i.id
+    WHERE fi.Fid = ?`;
+
+  db.query(query, [id], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Server error' });
+
+    if (results.length === 0) return res.status(404).json({ error: 'Món ăn không tìm thấy' });
+
+    const foodItem = {
+      Fid: results[0].Fid,
+      foodName: results[0].foodName,
+      image: results[0].image,
+      description: results[0].description,
+      foodPrice: results[0].foodPrice,
+      foodCalories: results[0].foodCalories,
+      ingredients: [],
+      totalCalories: 0,
+      totalPrice: 0
+    };
+
+    results.forEach(row => {
+      foodItem.ingredients.push({
+        ingredientId: row.ingredientId,
+        ingredientName: row.ingredientName,
+        ingredientCalories: row.ingredientCalories,
+        ingredientPrice: row.ingredientPrice,
+        gram: row.gram,
+        totalCalo: row.totalCalo
+      });
+      foodItem.totalCalories += row.totalCalo;
+      foodItem.totalPrice += (row.ingredientPrice * (row.gram / 1000)); // Giả sử giá là theo kg
+    });
+
+    res.json(foodItem);
+  });
+});
+
+// Add chi tiết món ăn
+app.post('/foodItems_ingredient', (req, res) => {
+  const { mid, Iid, gram, totalCalo } = req.body;
+  const query = 'INSERT INTO FoodItems_Ingredient (mid, Iid, gram, totalCalo) VALUES (?, ?, ?, ?)';
+  db.query(query, [mid, Iid, gram, totalCalo], (err) => {
+    if (err) return res.status(500).json({ error: 'Server error' });
+    res.json({ success: true, message: 'Food item ingredient added' });
+  });
+});
 
 const PORT = process.env.PORT || 3060;
 app.listen(PORT, () => {

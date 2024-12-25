@@ -1,18 +1,18 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginForm from './Components/LoginForm/LoginForm';
-import MainForm from './Components/MainForm/MainForm';
-import MealPlan from './Components/PlanMealForm/PlanMeal';
-import IngredientForm from './Components/IngredientForm/IngredientForm';
+import React, { Suspense } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import routes from "./routes";
+import Loading from "./Components/Loading/Loading";
+
 const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<LoginForm />} />
-        <Route path="/main" element={<MainForm />} />
-        <Route path='/planmeal' element={<MealPlan />} />
-        <Route path='/ingredient' element={<IngredientForm />} />
-      </Routes>
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          {routes.map((route, index) => (
+            <Route key={index} path={route.path} element={route.element} />
+          ))}
+        </Routes>
+      </Suspense>
     </Router>
   );
 };

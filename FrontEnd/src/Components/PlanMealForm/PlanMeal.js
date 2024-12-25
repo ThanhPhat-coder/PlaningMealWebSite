@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './PlanMeal.css';
 import TaskBar from '../TaskBar/TaskBar';
+import Snowfall from '../Snowfall/SnowFall';
+
+
 
 const PlanMeal = () => {
   const [mealModalOpen, setMealModalOpen] = useState(false);
@@ -20,10 +23,19 @@ const PlanMeal = () => {
 
   const adultCalories = 667;
   const childCalories = 400;
+  const totalStandardCalories = (peopleCount - childrenCount) * adultCalories + childrenCount * childCalories;
+  const totalSelectedCalories = selectedMeals.reduce(
+    (sum, meal) => sum + (meal ? meal.foodCalories * meal.quantity : 0),
+    0
+  );
+
+
+  const calorieDifference = totalSelectedCalories - totalStandardCalories;
 
   // Define meal times and days of the week
   const mealTimes = ['Bữa sáng', 'Bữa trưa', 'Bữa chiều'];
   const daysOfWeek = ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy', 'Chủ Nhật'];
+
 
   // Load saved meal plan data when component mounts
   useEffect(() => {
@@ -49,14 +61,13 @@ const PlanMeal = () => {
 
   useEffect(() => {
     axios.get('http://localhost:3060/meal-plan')
-      .then((response) => {
+      .then(response => {
         setMealPlans(response.data.mealPlans);
         if (response.data.mealPlans.length > 0) {
-          const latestPlan = response.data.mealPlans[0];
-          loadMealPlan(latestPlan.id);
+          loadMealPlan(response.data.mealPlans[0].id);
         }
       })
-      .catch((error) => console.error('Error fetching meal plans:', error));
+      .catch(error => console.error('Error fetching meal plans:', error));
   }, []);
 
   const loadMealPlan = (planId) => {
@@ -76,6 +87,50 @@ const PlanMeal = () => {
       setCurrentPlanId(planId);
     }
   };
+
+  const saveMealPlanToDB = () => {
+    const validMeals = selectedMeals.filter(meal => meal !== null && meal.foodId);
+
+    if (validMeals.length === 0) {
+      alert('Please select at least one valid meal!');
+      return;
+    }
+
+    const payload = {
+      mealPlanId: currentPlanId,
+      dateRangeStart: document.getElementById('start-date').value,
+      dateRangeEnd: document.getElementById('end-date').value,
+      peopleCount,
+      childrenCount,
+      totalCost,
+      meals: validMeals.map((meal, index) => ({
+        mealTime: mealTimes[Math.floor(index / 7)],
+        dayOfWeek: daysOfWeek[index % 7],
+        foodId: meal.foodId,
+        quantity: meal.quantity,
+      })),
+    };
+
+    axios.post('http://localhost:3060/save-meal-plan', payload)
+      .then(response => {
+        alert('Meal plan saved successfully!');
+        if (!currentPlanId) {
+          const newPlan = {
+            id: response.data.newMealPlanId,
+            date_range_start: payload.dateRangeStart,
+            date_range_end: payload.dateRangeEnd,
+            people_count: payload.peopleCount,
+            children_count: payload.childrenCount,
+            total_cost: payload.totalCost,
+            details: payload.meals,
+          };
+          setMealPlans([newPlan, ...mealPlans]);
+        }
+      })
+      .catch(error => console.error('Error saving meal plan:', error));
+  };
+
+
 
   // Add new plan
   const addNewPlan = () => {
@@ -168,36 +223,28 @@ const PlanMeal = () => {
 
   //--------
   const handleMealSelection = (meal, index) => {
-    if (!meal || !meal.Fid) {
-      console.error("Invalid meal selection: Missing Fid or meal object", meal);
-      alert("Món ăn không hợp lệ. Vui lòng chọn lại!");
-      return;
-    }
-
     const updatedMeals = [...selectedMeals];
     const updatedSearches = [...mealSearches];
 
     updatedMeals[index] = {
       ...meal,
-      foodId: meal.Fid, // Sử dụng Fid làm foodId
+      foodId: meal.Fid,
       quantity: updatedMeals[index]?.quantity || 1,
     };
     updatedSearches[index] = meal.foodName;
 
     setSelectedMeals(updatedMeals);
     setMealSearches(updatedSearches);
-
     updateTotalCost(updatedMeals);
   };
 
-
-  //-------
-
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
 
   const updateTotalCost = (meals) => {
-    const cost = meals
-      .filter((meal) => meal !== null)
-      .reduce((total, meal) => total + meal.foodPrice * meal.quantity, 0);
+    const cost = meals.filter(meal => meal !== null).reduce((total, meal) => total + meal.foodPrice * meal.quantity, 0);
     setTotalCost(cost);
   };
 
@@ -361,29 +408,30 @@ const PlanMeal = () => {
 
   const handleSwitchPlan = (planId) => {
     if (planId) {
-      // Nếu chọn Plan đã có, load dữ liệu
       loadMealPlan(planId);
     } else {
-      // Nếu là Plan mới, reset dữ liệu
-      addNewPlan();
+      setPeopleCount(1);
+      setChildrenCount(0);
+      setHasChildren(false);
+      setMealSearches(['']);
+      setSelectedMeals([null]);
+      setTotalCost(0);
+      setCurrentPlanId(null);
     }
   };
 
   const handleDeletePlan = (planId) => {
-    if (!window.confirm("Bạn có chắc muốn xóa kế hoạch này?")) return;
+    if (!window.confirm('Are you sure you want to delete this plan?')) return;
 
     axios.delete(`http://localhost:3060/delete-meal-plan/${planId}`)
       .then(() => {
-        setMealPlans(mealPlans.filter((plan) => plan.id !== planId));
+        setMealPlans(mealPlans.filter(plan => plan.id !== planId));
         if (currentPlanId === planId) {
-          setCurrentPlanId(null); // Reset nếu kế hoạch hiện tại bị xóa
+          setCurrentPlanId(null);
         }
-        alert("Xóa kế hoạch thành công!");
+        alert('Plan deleted successfully!');
       })
-      .catch((error) => {
-        console.error("Error deleting meal plan:", error.response?.data || error.message);
-        alert("Lỗi khi xóa kế hoạch, vui lòng thử lại.");
-      });
+      .catch(error => console.error('Error deleting plan:', error));
   };
 
 
@@ -398,17 +446,20 @@ const PlanMeal = () => {
   };
 
   return (
-    <div className='main'>
+    <div className='main' style={{ marginTop: '1%' }}>
       <TaskBar />
-      <div className="date-range">
-        <label htmlFor="start-date">Từ ngày:</label>
-        <input type="date" id="start-date" />
+      <Snowfall />
 
-        <label htmlFor="end-date">Đến ngày:</label>
-        <input type="date" id="end-date" />
+      <h1 className='titleFirst'>Lịch ăn uống trong tuần</h1>
+      <p className='titleSec'>Chọn món ăn cho mỗi bữa ăn trong tuần của bạn</p>
+      <div className='date-range'>
+        <label htmlFor='start-date'>Start Date:</label>
+        <input type='date' id='start-date' defaultValue={getCurrentDate()} />
+
+        <label htmlFor='end-date'>End Date:</label>
+        <input type='date' id='end-date' />
       </div>
 
-      <h1>Lịch ăn uống trong tuần</h1>
       <div className="meal-plan-wrapper">
         <div className="meal-plan-container">
           <div className={`meal-plan ${currentPlanId === null ? 'flip' : ''}`}>
@@ -421,30 +472,27 @@ const PlanMeal = () => {
           </div>
         </div>
 
-        <div className="plan-tabs">
-          {mealPlans.map((plan) => (
-            <div key={plan.id} className="plan-tab-container">
+        <div className='plan-tabs'>
+          {mealPlans.map(plan => (
+            <div key={plan.id} className='plan-tab-container'>
               <button
                 className={`plan-tab ${currentPlanId === plan.id ? 'active' : ''}`}
-                onClick={() => handleSwitchPlanWithFlip(plan.id)}
+                onClick={() => handleSwitchPlan(plan.id)}
               >
                 Plan {plan.id}
               </button>
               <button
-                className="delete-plan-btn"
+                className='delete-plan-btn'
                 onClick={() => handleDeletePlan(plan.id)}
+                title='Delete Plan'
               >
                 &times;
               </button>
             </div>
           ))}
-          <button className="plan-tab new" onClick={() => handleSwitchPlanWithFlip(null)}>+ Thêm Plan mới</button>
-          <button className="save-btn" onClick={handleSaveMealToDB}>
-            Lưu vào cơ sở dữ liệu
-          </button>
+          <button className='plan-tab new' onClick={() => handleSwitchPlan(null)}>+ New Plan</button>
+          <button className='save-btn' onClick={saveMealPlanToDB}>Save Plan</button>
         </div>
-
-
       </div> <br></br>
 
 
@@ -485,8 +533,8 @@ const PlanMeal = () => {
 
 
       {mealModalOpen && (
-        <div id="meal-modal" className="modal" style={{ display: 'block' }}>
-          <div className="modal-content" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
+        <div id="meal-modal" className="modal-makemeal" style={{ display: 'block' }}>
+          <div className="modal-content two-columns">
             <span className="close-btn" onClick={() => setMealModalOpen(false)}>&times;</span>
             <h2>Nhập thông tin cho bữa ăn</h2>
 
@@ -604,23 +652,60 @@ const PlanMeal = () => {
                         className="remove-meal-btn"
                         onClick={() => removeMeal(index)}
                       >
-                        ❌ Xóa món
+                        ❌
                       </button>
                     </div>
                   )}
                 </div>
+
               ))}
 
               <br />
-              <button type="button" onClick={addNewMeal}>Thêm món mới</button>
-
-              <p>Tổng calo cần đạt: <b>{totalCalories}</b> calo</p>
-              <p>Tổng chi phí: <b>{totalCost}</b> VNĐ</p>
+              <div className="modal-footer">
+                <button type="button" onClick={addNewMeal}>Thêm món mới</button>
+                <button style={{ backgroundColor: 'green', marginLeft: 5 }} type="button" className="save-btn" onClick={handleSaveMeal}>Lưu</button>
+              </div>
 
               {showWarning && <p className="warning-text">Vui lòng chọn ít nhất một món ăn!</p>}
               {formWarning && <p className="warning-text">Vui lòng chọn món ăn cho tất cả các bữa ăn!</p>}
 
-              <button style={{ backgroundColor: 'green' }} type="button" className="save-btn" onClick={handleSaveMeal}>Lưu</button>
+              <div className="selected-meals">
+                <h3>Các món đã chọn:</h3>
+                {selectedMeals.map((meal, index) => (
+                  meal && (
+                    <div key={meal.foodId} className="selected-meal-item">
+                      <button
+                        className="remove-meal-btn"
+                        onClick={() => removeMeal(index)}
+                        title="Xóa món"
+                      >
+                        &times;
+                      </button>
+                      <img
+                        src={meal.image}
+                        alt={meal.foodName}
+                        style={{ width: '50px', height: '50px', borderRadius: '5px', marginRight: '10px' }}
+                      />
+                      <span>{meal.foodName}</span>
+                      <span style={{ marginLeft: '10px' }}>x{meal.quantity}</span>
+                      <span style={{ marginLeft: '10px', color: '#555' }}>({meal.foodCalories} calo mỗi phần)</span>
+                    </div>
+                  )
+                ))}
+              </div>
+              <div className="summary">
+                <div className="summary-card">
+                  <p className="summary-item">Tổng calo cần đạt: <b>{totalStandardCalories}</b> calo</p>
+                  <p className="summary-item">Tổng calo đã chọn: <b>{totalSelectedCalories}</b> calo</p>
+                  <p className={`summary-item ${calorieDifference >= 0 ? 'calorie-positive' : 'calorie-negative'}`}>
+                    {calorieDifference >= 0
+                      ? <><span role="img" aria-label="check" className="icon">✔️</span>Dư thừa {calorieDifference} calo</>
+                      : <><span role="img" aria-label="warning" className="icon">⚠️</span>Thiếu hụt {Math.abs(calorieDifference)} calo</>}
+                  </p>
+                  <p className="summary-item">Tổng chi phí: <b>{totalCost}</b> VNĐ</p>
+                </div>
+              </div>
+
             </form>
           </div>
         </div>

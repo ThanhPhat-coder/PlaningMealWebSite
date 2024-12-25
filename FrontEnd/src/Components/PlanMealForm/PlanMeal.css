@@ -2,7 +2,7 @@ body {
     font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 20px;
-    background: linear-gradient(135deg, #74ebd5 0%, #acb6e5 100%);
+    /* background: linear-gradient(135deg, #74ebd5 0%, #acb6e5 100%); */
     color: #333;
     min-height: 100vh;
     overflow-y: auto;
@@ -17,6 +17,7 @@ h1 {
 }
 
 .date-range {
+    margin-top: 15px;
     text-align: center;
     margin-bottom: 30px;
     color: #555;
@@ -73,7 +74,7 @@ button.open-modal-btn:hover {
 }
 
 /* Modal styles */
-.modal {
+.modal-makemeal {
     display: none;
     position: fixed;
     z-index: 100;
@@ -107,6 +108,8 @@ button.open-modal-btn:hover {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    position: relative;
+    padding-top: 50px;
 }
 
 .modal-footer {
@@ -136,10 +139,13 @@ button[type="button"] {
 
 
 .close-btn {
+    left: 25%;
     float: right;
-    font-size: 28px;
+    font-size: 35px;
     cursor: pointer;
-    color: #bbb;
+    color: #000000;
+    position: fixed;
+    z-index: 10;
 }
 
 .close-btn:hover {
@@ -244,8 +250,9 @@ input[type="number"]:focus {
 }
 
 .main {
-    background: linear-gradient(135deg, #74ebd5 0%, #acb6e5 100%);
+    /* background: linear-gradient(135deg, #74ebd5 0%, #acb6e5 100%); */
     padding: 50px;
+    margin-top: -3%;
 }
 
 .ingredient-list {
@@ -336,4 +343,170 @@ input[type="number"]:focus {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* #has-children {
+    background-color: red;
+} */
+.side-popup {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 300px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px 0 0 8px;
+    padding: 20px;
+    z-index: 200;
+    overflow-y: auto;
+}
+
+.close-side-popup-btn {
+    display: block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #ff8a5c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.close-side-popup-btn:hover {
+    background-color: #ff6b35;
+}
+
+.open-side-popup-btn {
+    margin-left: 2px;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.open-side-popup-btn:hover {
+    background-color: #388e3c;
+}
+
+.selected-meal-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+    /* Để định vị nút xóa trong thẻ */
+    padding: 5px 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.remove-meal-btn {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.remove-meal-btn:hover {
+    background: #d32f2f;
+}
+
+.selected-meal-item img {
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    padding: 3px;
+}
+
+.selected-meal-item span {
+    font-size: 14px;
+    color: #333;
+}
+
+.date-range {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    margin: 20px auto;
+    width: 80%;
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+}
+
+.date-range label {
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.date-range input[type="date"] {
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+    background: #ffffff;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    width: 180px;
+}
+
+.date-range input[type="date"]:focus {
+    background: #e3f2fd;
+    box-shadow: 0 0 10px #29b6f6, 0 0 40px #29b6f6;
+    transform: scale(1.1);
+}
+
+.titleFirst {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.titleSec {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #41bff5;
+    margin-bottom: 30px;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.date-range::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    filter: blur(20px);
+    border-radius: 15px;
 }

@@ -5,34 +5,31 @@ import { useNavigate } from 'react-router-dom';
 import './TaskBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import chillMusic from '../Assets/Music/rick.MP3'; // Đường dẫn tới file nhạc chill
+import chillMusic from '../Assets/Music/rick.MP3';
 
 const TaskBar = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(false); // Trạng thái mở/đóng dropdown
-  const [isPlaying, setIsPlaying] = useState(false); // Trạng thái phát nhạc
-  const audioRef = useRef(new Audio(chillMusic)); // Tạo đối tượng audio với nhạc chill
-  const [currentTime, setCurrentTime] = useState(0); // Lưu thời gian hiện tại của nhạc
-  const dropdownRef = useRef(null); // Tạo ref cho dropdown
-  const navigate = useNavigate(); // Dùng để điều hướng
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(new Audio(chillMusic));
+  const [currentTime, setCurrentTime] = useState(0);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
-  // Hàm bật/tắt dropdown
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  // Hàm bật/tắt phát nhạc
   const toggleMusic = () => {
     if (isPlaying) {
-      audioRef.current.pause(); // Dừng nhạc nếu đang phát
+      audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.currentTime = currentTime; // Đặt lại thời gian hiện tại khi phát lại
-      audioRef.current.play(); // Phát nhạc từ thời gian đã dừng
+      audioRef.current.currentTime = currentTime;
+      audioRef.current.play();
       setIsPlaying(true);
     }
   };
 
-  // Cập nhật thời gian hiện tại của nhạc khi phát
   useEffect(() => {
     const updateTime = () => {
       setCurrentTime(audioRef.current.currentTime);
@@ -45,7 +42,6 @@ const TaskBar = () => {
     };
   }, []);
 
-  // Đóng dropdown khi nhấp ra ngoài
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setDropdownOpen(false);
@@ -59,52 +55,65 @@ const TaskBar = () => {
     };
   }, []);
 
-  // Hàm xử lý đăng xuất
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Xóa token khỏi localStorage
-    navigate('/'); // Điều hướng về LoginForm
+    localStorage.removeItem('token');
+    navigate('/');
   };
 
   const handleHome = () => {
-    navigate('/main'); // Điều hướng về MainForm
+    navigate('/main');
   };
 
   const handleMealPlan = () => {
-    navigate('/planmeal'); // Điều hướng về PlanMealForm
+    navigate('/planmeal');
+  };
+
+  const handleMakeMeal = () => {
+    navigate('/makemeal');
   };
 
   const handleIngredient = () => {
-    navigate('/ingredient'); // Điều hướng về IngredientForm
-  }
+    navigate('/ingredient');
+  };
+  const handleInfoUser = () => {
+    navigate('/infouser');
+  };
+
   return (
-    <div className='taskbar-container'>
-      <div className='taskbar-left'>
-        <div className='taskbar-icon'>
+    <div className='taskbar-container-custom'>
+      <div className='taskbar-left-custom'>
+        <div className='taskbar-icon-custom'>
           <i className="fa fa-home" onClick={handleHome}></i>
         </div>
-        <div className='music-icon' onClick={toggleMusic}>
+        <div className='music-icon-custom' onClick={toggleMusic}>
           <i className="fa fa-music"></i>
-          <span className='music-text'>{isPlaying ? 'Dừng nhạc' : 'Phát nhạc'}</span>
+          <span className='music-text-custom'>{isPlaying ? 'Dừng nhạc' : 'Phát nhạc'}</span>
         </div>
       </div>
-      <div className='taskbar-right'>
-        <div className='taskbar-item-container'>
-          <div className='taskbar-item' onClick={handleMealPlan}>Chức năng 1</div>
-          <div className='taskbar-item' onClick={handleIngredient}>Chức năng 2</div>
-          <div className='taskbar-item'>Chức năng 3</div>
-          <div className='taskbar-item'>Chức năng 4</div>
+      <div className='taskbar-right-custom'>
+        <div className='taskbar-item-container-custom'>
+          <div className='taskbar-item-custom' onClick={handleMealPlan}>Lập Kế Hoạch</div>
+          <div className='taskbar-item-custom' onClick={handleIngredient}>Nguồn Nguyên Liệu</div>
+          <div className='taskbar-item-custom' onClick={handleMakeMeal}>Gợi ý chọn món</div>
+          <div className='taskbar-item-custom'>Cộng Đồng Chia Sẽ</div>
         </div>
-        <div className='user-profile' onClick={toggleDropdown} ref={dropdownRef}>
-          <img src='path/to/avatar.jpg' alt='User Avatar' className='user-avatar' />
+        <div className='user-profile-custom' onClick={toggleDropdown} ref={dropdownRef}>
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-VLNNe21fRCrEEMk1TF0i8BzrjxqDR5s6zL89sa28-ouSiB8aBVH2VuPqG_4sNNf_NUQ&usqp=CAU"
+            alt='User Avatar'
+            className='user-avatar-custom'
+            style={{ objectFit: 'cover' }}
+          />
+
           <div className='dropdown-icon'>
             <i className="fa fa-caret-down"></i>
           </div>
           {dropdownOpen && (
-            <div className='dropdown-menu'>
-              <a href='#'>
+            <div className='dropdown-menu-custom'>
+              <a onClick={handleInfoUser}>
                 <FontAwesomeIcon icon={faCog} /> Cài đặt
               </a>
-              <a href='#' onClick={handleLogout}> {/* Gọi hàm xử lý đăng xuất */}
+              <a href='#' onClick={handleLogout}>
                 <FontAwesomeIcon icon={faSignOutAlt} /> Đăng xuất
               </a>
             </div>

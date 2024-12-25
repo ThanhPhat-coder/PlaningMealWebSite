@@ -1,54 +1,136 @@
+/* Improved footer design with deep blue gradient background */
 .footer-container {
-    background-color: #c9d6ff;
-    background: linear-gradient(to right, #e2e2e2, #c9d6ff);; /* Màu nền cho footer */
-    padding: 15px; /* Tăng padding để footer thoáng hơn */
+    background: linear-gradient(90deg, #141E30, #243B55);
+    /* Deep blue gradient */
+    color: #ffffff;
+    /* White text for contrast */
+    padding: 40px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.footer-content {
     display: flex;
-    justify-content: space-between; /* Giữ khoảng cách đều giữa các phần tử */
-    align-items: center; /* Căn giữa các mục theo chiều dọc */
-    flex-wrap: wrap; /* Cho phép các mục xuống dòng nếu cần */
-    border-top: 2px solid #1185e3; /* Viền trên nhẹ nhàng */
-    font-size: 14px; /* Tăng kích thước chữ cho dễ đọc */
-    position: relative; /* Cần để căn vị trí của biểu tượng quay */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho footer */
-    margin-top: 60px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
 }
 
 .footer-section {
-    flex: 1; /* Cho phép các phần tử chiếm không gian đều */
-    text-align: center; /* Căn giữa nội dung */
-    padding: 0 15px; /* Thêm khoảng cách padding cho các mục */
+    flex: 1;
+    min-width: 250px;
+    padding: 20px;
+    text-align: left;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Slightly transparent white background for contrast */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
 }
 
 .footer-section h3 {
-    font-size: 16px; /* Kích thước chữ tiêu đề vừa phải */
-    margin-bottom: 5px; /* Khoảng cách dưới tiêu đề */
-    color: #333; /* Màu chữ tiêu đề */
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #ffffff;
+    letter-spacing: 1px;
 }
 
 .footer-section p,
 .footer-section ul {
-    margin: 0; /* Không có khoảng cách */
-    padding: 0; /* Không có padding */
-    list-style: none; /* Không hiển thị dấu đầu dòng */
-    color: #666; /* Màu chữ cho nội dung */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #d1d1d1;
+    /* Light gray text for readability */
 }
 
 .footer-section a {
-    color: #007bff; /* Màu link */
-    text-decoration: none; /* Không gạch chân */
-    transition: color 0.3s; /* Hiệu ứng chuyển màu khi hover */
+    color: #d1d1d1;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-section a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: #fff;
+    bottom: -4px;
+    left: 0;
+    transition: width 0.3s;
 }
 
 .footer-section a:hover {
-    text-decoration: underline; /* Gạch chân khi hover */
-    color: #0056b3; /* Đổi màu khi hover */
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.footer-section a:hover::after {
+    width: 100%;
+}
+
+.footer-social {
+    text-align: center;
+    flex-basis: 100%;
+    margin-top: 40px;
+}
+
+.footer-social h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.social-icons a {
+    color: #ffffff;
+    font-size: 30px;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #ffdc58;
+    /* Gold color on hover for a luxurious look */
+    transform: scale(1.2);
 }
 
 .footer-copyright {
-    text-align: center; /* Căn giữa copyright */
-    flex-basis: 100%; /* Chiếm toàn bộ chiều rộng */
-    margin-top: 10px; /* Khoảng cách trên */
-    font-size: 12px; /* Kích thước chữ cho copyright */
-    color: #888; /* Màu chữ nhẹ cho copyright */
-    opacity: 0.8; /* Độ mờ cho văn bản copyright */
+    text-align: center;
+    flex-basis: 100%;
+    margin-top: 30px;
+    font-size: 14px;
+    opacity: 0.8;
+    color: #d1d1d1;
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-section {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .footer-social {
+        margin-top: 20px;
+    }
+
+    .footer-copyright {
+        margin-top: 20px;
+    }
 }
